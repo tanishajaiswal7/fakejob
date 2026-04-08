@@ -1,0 +1,265 @@
+{
+  "info": {
+    "name": "FakeJobDetector API",
+    "description": "API endpoints for FakeJobDetector application",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Analysis",
+      "item": [
+        {
+          "name": "Analyze Job Offer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jobDescription\": \"Work from home, make $5000 per week guaranteed! No experience needed. Limited time offer. Registration fee: $99. Send money via Western Union. Urgent hiring!\",\n  \"recruiterEmail\": \"recruiter@gmail.com\",\n  \"phoneNumber\": \"+1 (555) 123-4567\",\n  \"companyName\": \"TechCorp\",\n  \"companyWebsite\": \"\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/analyze",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "analyze"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Analysis History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/history?limit=10",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "history"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get History by Risk Level",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/history?limit=10&riskLevel=High",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "history"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "riskLevel",
+                  "value": "High"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Specific Analysis",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/analysis/{analysisId}",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "analysis", "{analysisId}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/stats",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "stats"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/health",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "health"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "AI Service",
+      "item": [
+        {
+          "name": "AI Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5001/health",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5001",
+              "path": ["health"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "AI Predict",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"job_description\": \"Senior Software Engineer position. 5+ years experience required. Competitive salary. Health insurance included. Submit resume and cover letter.\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5001/predict",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5001",
+              "path": ["predict"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "AI Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5001/stats",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5001",
+              "path": ["stats"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Test Cases",
+      "item": [
+        {
+          "name": "Test Case - Obvious Scam",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jobDescription\": \"URGENT HIRING! Make $10,000/week from home! No experience needed! Just pay $299 registration fee via Western Union or Bitcoin. Limited positions. Act now! Guaranteed money! No risk! Certified program!\",\n  \"recruiterEmail\": \"bitcoin.job@yahoo.com\",\n  \"phoneNumber\": \"123-456-7890\",\n  \"companyName\": \"GlobalOpportunities\",\n  \"companyWebsite\": \"\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/analyze",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "analyze"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Test Case - Legitimate Job",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jobDescription\": \"Senior Software Engineer. We are seeking an experienced software engineer with 5+ years of professional experience. Required skills: Java, Python, Docker, Kubernetes. Responsibilities include designing scalable systems, code review, and mentoring junior developers. Competitive salary based on experience. Full benefits including health insurance, 401k, and PTO.\",\n  \"recruiterEmail\": \"recruiting@microsoft.com\",\n  \"phoneNumber\": \"+1 (425) 882-8080\",\n  \"companyName\": \"Microsoft\",\n  \"companyWebsite\": \"www.microsoft.com\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/analyze",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "analyze"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Test Case - Medium Risk",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jobDescription\": \"Exciting opportunity for Data Analyst! Salary: $50,000 - $150,000 per year (high for entry level). Remote position. Must apply immediately, only 2 spots open. Send resume to jobs@example.com\",\n  \"recruiterEmail\": \"hiring@example.com\",\n  \"phoneNumber\": \"555-123-4567\",\n  \"companyName\": \"DataCorp Solutions\",\n  \"companyWebsite\": \"\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/analyze",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "analyze"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
