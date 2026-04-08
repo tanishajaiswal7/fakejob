@@ -381,7 +381,7 @@ db.jobanalyses.aggregate([
   - Steps to reproduce
   - Expected vs actual behavior
 
-- **Email**: support@fakejobdetector.com
+- **Email**: support@jobshieldai.com
 - **Chat**: Discord server link
 
 ---

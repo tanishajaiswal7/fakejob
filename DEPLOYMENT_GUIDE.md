@@ -1,4 +1,4 @@
-# FakeJobDetector - Complete Deployment Guide
+# JobShield AI - Complete Deployment Guide
 
 ## Overview
 

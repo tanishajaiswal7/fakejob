@@ -1,4 +1,4 @@
-# 🚨 FakeJobDetector - Architecture Overview
+# 🚨 JobShield AI - Architecture Overview
 
 ## 🏗️ System Architecture
 

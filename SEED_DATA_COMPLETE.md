@@ -2,7 +2,7 @@
 
 ## Summary
 
-Successfully created and inserted **9 realistic job analyses** into the FakeJobDetector database featuring authentic Indian company scenarios with both **FAKE** and **REAL** job postings.
+Successfully created and inserted **9 realistic job analyses** into the JobShield AI database featuring authentic Indian company scenarios with both **FAKE** and **REAL** job postings.
 
 ---
 
@@ -240,4 +240,4 @@ This seed data demonstrates:
 
 ---
 
-**Your FakeJobDetector application now has realistic demo data to showcase the detection capabilities!** 🚀
+**Your JobShield AI application now has realistic demo data to showcase the detection capabilities!** 🚀

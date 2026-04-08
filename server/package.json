@@ -1,7 +1,7 @@
 {
-  "name": "fake-job-detector-backend",
+  "name": "jobshield-ai-backend",
   "version": "1.0.0",
-  "description": "Backend for Fake Job & Internship Detector",
+  "description": "Backend for JobShield AI - Job Fraud Detection System",
   "main": "index.js",
   "type": "module",
   "scripts": {

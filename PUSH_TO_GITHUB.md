@@ -7,7 +7,7 @@
 cd "c:\Users\tanis\Desktop\Seminar Project"
 git init
 git add .
-git commit -m "Initial commit - FakeJobDetector project"
+git commit -m "Initial commit - JobShield AI project"
 ```
 
 ### Step 2: Add Remote Repository
@@ -38,7 +38,7 @@ git status
 git add .
 
 # Step 4: First commit
-git commit -m "Initial commit - FakeJobDetector with frontend, backend, and AI service"
+git commit -m "Initial commit - JobShield AI with frontend, backend, and AI service"
 
 # Step 5: Add GitHub remote
 git remote add origin https://github.com/tanishajaiswal7/fakejob.git
@@ -99,7 +99,7 @@ You should see green "new file:" entries.
 
 ### 7. First Commit
 ```bash
-git commit -m "Initial commit - FakeJobDetector full stack project"
+git commit -m "Initial commit - JobShield AI full stack project"
 ```
 
 ### 8. Add GitHub Remote

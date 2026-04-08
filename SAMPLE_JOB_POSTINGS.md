@@ -1,6 +1,6 @@
 # Sample Job Postings for Testing
 
-Copy and paste these job postings into the FakeJobDetector website to test and demonstrate the system.
+Copy and paste these job postings into the JobShield AI website to test and demonstrate the system.
 
 ---
 

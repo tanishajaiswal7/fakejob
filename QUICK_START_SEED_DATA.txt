@@ -1,6 +1,6 @@
 ```
 ╔════════════════════════════════════════════════════════════════════════════╗
-║           FAKE JOB DETECTOR - SEED DATA QUICK REFERENCE                    ║
+║           JOBSHIELD AI - SEED DATA QUICK REFERENCE                       ║
 ╚════════════════════════════════════════════════════════════════════════════╝
 
 📱 HOW TO TEST THE DATA

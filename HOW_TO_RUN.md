@@ -1,4 +1,4 @@
-# How to Run the FakeJobDetector Project
+# How to Run the JobShield AI Project
 
 ## Prerequisites
 - Node.js installed

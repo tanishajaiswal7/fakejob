@@ -76,7 +76,7 @@ export default function Landing({ navigate, auth }) {
       {/* Features */}
       <section className="features">
         <div className="container">
-          <h2>Why Use FakeJobDetector?</h2>
+          <h2>Why Use JobShield AI?</h2>
           <div className="features-grid grid grid-2">
             <div className="feature-item">
               <div className="feature-icon">✓</div>

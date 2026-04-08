@@ -18,7 +18,7 @@ export default function Header({ auth, navigate, handleLogout }) {
               onClick={() => handleNavClick('/')}
               className="logo-button"
             >
-              🚨 FakeJobDetector
+              �️ JobShield AI
             </button>
           </div>
           <nav className="nav">
