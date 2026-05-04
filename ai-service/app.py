@@ -1,4 +1,5 @@
 import os
+import logging
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
@@ -6,45 +7,56 @@ import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 import pickle
-import json
 
+# Load environment variables
 load_dotenv()
 
+# Initialize app
 app = Flask(__name__)
 CORS(app)
+
+# Logging setup
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Constants
+MODEL_PATH = 'models/fraud_model.pkl'
+VECTORIZER_PATH = 'models/tfidf_vectorizer.pkl'
+THRESHOLD = float(os.getenv("FRAUD_THRESHOLD", 0.5))
 
 # Global model variables
 model = None
 vectorizer = None
-MODEL_PATH = 'models/fraud_model.pkl'
-VECTORIZER_PATH = 'models/tfidf_vectorizer.pkl'
+
 
 def load_or_train_model():
     """Load model from disk or train a new one"""
     global model, vectorizer
-    
-    if os.path.exists(MODEL_PATH) and os.path.exists(VECTORIZER_PATH):
-        try:
+
+    try:
+        if os.path.exists(MODEL_PATH) and os.path.exists(VECTORIZER_PATH):
             with open(MODEL_PATH, 'rb') as f:
                 model = pickle.load(f)
             with open(VECTORIZER_PATH, 'rb') as f:
                 vectorizer = pickle.load(f)
-            print("✅ Model loaded from disk")
+
+            logger.info("✅ Model loaded from disk")
             return
-        except Exception as e:
-            print(f"⚠️  Error loading model: {e}, training new model")
-    
-    # Train model with sample data
-    train_model()
+
+        logger.warning("⚠️ Model not found. Training new model...")
+        train_model()
+
+    except Exception as e:
+        logger.error(f"❌ Error loading model: {e}")
+        train_model()
+
 
 def train_model():
     """Train a new Logistic Regression model"""
     global model, vectorizer
-    
-    # Training data - job descriptions with labels
-    # 1 = fraud/fake, 0 = legitimate
+
     training_texts = [
-        # Fraud examples
+        # Fraud
         "Work from home, make $5000 per week guaranteed. No experience needed.",
         "Limited time offer! Register now for exclusive training. $99 fee required.",
         "Easy money! Bitcoin investment opportunity. Double your money in 30 days.",
@@ -55,117 +67,123 @@ def train_model():
         "Paid to take surveys online. Make thousands monthly from your couch.",
         "MLM opportunity: Sell products and recruit others. Build passive income!",
         "Western Union payment required. International job opportunity.",
-        
-        # Legitimate examples
-        "Senior Software Engineer. 5+ years experience required. Competitive salary. Submit resume.",
-        "Marketing Manager position. Lead a team of 5. Based in New York office.",
-        "Financial Analyst. Bachelor's degree in Finance or related field. Full benefits.",
-        "UX Designer. Portfolio required. Remote work available. Salary $80,000-$120,000.",
-        "Project Manager. PMP certification preferred. Work with Fortune 500 companies.",
-        "Data Scientist. Machine learning experience required. Competitive compensation.",
-        "Customer Service Representative. High school diploma minimum. Full-time position.",
-        "Software Developer. JavaScript, React experience. Remote position available.",
-        "Sales Executive. 3 years sales experience. Base salary plus commission.",
-        "HR Specialist. SHRM certification preferred. Benefits include health insurance."
+
+        # Legit
+        "Senior Software Engineer. 5+ years experience required. Competitive salary.",
+        "Marketing Manager position. Lead a team of 5. Based in office.",
+        "Financial Analyst. Bachelor's degree required. Full benefits.",
+        "UX Designer. Portfolio required. Remote work available.",
+        "Project Manager. PMP certification preferred.",
+        "Data Scientist. Machine learning experience required.",
+        "Customer Service Representative. Full-time position.",
+        "Software Developer. React experience required.",
+        "Sales Executive. Base salary plus commission.",
+        "HR Specialist. Benefits included."
     ]
-    
-    training_labels = [
-        1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  # Fraud (1)
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0   # Legitimate (0)
-    ]
-    
-    # Create vectorizer and transform texts
-    vectorizer = TfidfVectorizer(max_features=100, lowercase=True, stop_words='english')
+
+    training_labels = [1]*10 + [0]*10
+
+    vectorizer = TfidfVectorizer(max_features=200, lowercase=True, stop_words='english')
     X = vectorizer.fit_transform(training_texts)
-    
-    # Train Logistic Regression model
-    model = LogisticRegression(max_iter=200, random_state=42)
+
+    model = LogisticRegression(max_iter=300, random_state=42)
     model.fit(X, training_labels)
-    
-    # Create models directory if it doesn't exist
+
     os.makedirs('models', exist_ok=True)
-    
-    # Save model
+
     with open(MODEL_PATH, 'wb') as f:
         pickle.dump(model, f)
+
     with open(VECTORIZER_PATH, 'wb') as f:
         pickle.dump(vectorizer, f)
-    
-    print("✅ Model trained and saved")
+
+    logger.info("✅ Model trained and saved")
+
 
 @app.route('/health', methods=['GET'])
 def health_check():
-    """Health check endpoint"""
     return jsonify({
         'status': 'ok',
         'model_loaded': model is not None
     })
 
+
 @app.route('/predict', methods=['POST'])
 def predict():
-    """Predict if a job description is fraudulent"""
     try:
         data = request.get_json()
-        job_description = data.get('job_description', '')
-        
-        if not job_description:
+
+        if not data or 'job_description' not in data:
             return jsonify({
                 'success': False,
                 'error': 'job_description is required'
             }), 400
-        
-        if not model or not vectorizer:
+
+        job_description = data['job_description'].strip()
+
+        if not job_description:
+            return jsonify({
+                'success': False,
+                'error': 'job_description cannot be empty'
+            }), 400
+
+        if model is None or vectorizer is None:
             return jsonify({
                 'success': False,
                 'error': 'Model not loaded'
             }), 500
-        
-        # Transform text using vectorizer
+
         X = vectorizer.transform([job_description])
-        
-        # Get prediction probability
-        probability = model.predict_proba(X)[0]
-        fraud_probability = float(probability[1])  # Probability of being fraud (class 1)
-        
-        # Get confidence
-        confidence = float(max(probability))
-        
+        probabilities = model.predict_proba(X)[0]
+
+        fraud_probability = float(probabilities[1])
+        confidence = float(max(probabilities))
+
+        prediction = 'fraud' if fraud_probability > THRESHOLD else 'legitimate'
+
         return jsonify({
             'success': True,
+            'prediction': prediction,
             'fraud_probability': fraud_probability,
             'confidence': confidence,
-            'prediction': 'fraud' if fraud_probability > 0.5 else 'legitimate'
+            'threshold_used': THRESHOLD
         })
-    
+
     except Exception as e:
-        print(f"Prediction error: {e}")
+        logger.error(f"Prediction error: {e}")
         return jsonify({
             'success': False,
-            'error': str(e)
+            'error': 'Prediction failed'
         }), 500
+
 
 @app.route('/stats', methods=['GET'])
 def stats():
-    """Get model statistics"""
-    if not model:
+    if model is None or vectorizer is None:
         return jsonify({'error': 'Model not loaded'}), 500
-    
+
     return jsonify({
         'model_type': 'LogisticRegression',
-        'features': len(vectorizer.get_feature_names_out()) if vectorizer else 0,
+        'features': len(vectorizer.get_feature_names_out()),
         'training_samples': 20
     })
 
+
 @app.errorhandler(404)
-def not_found(error):
+def not_found(_):
     return jsonify({'error': 'Endpoint not found'}), 404
 
+
 @app.errorhandler(500)
-def internal_error(error):
+def internal_error(_):
     return jsonify({'error': 'Internal server error'}), 500
 
+
 if __name__ == '__main__':
-    print("🚀 Starting AI Service...")
+    logger.info("🚀 Starting AI Service...")
     load_or_train_model()
+
     port = int(os.getenv('AI_PORT', 5001))
-    app.run(debug=True, port=port, host='0.0.0.0')
+    debug_mode = os.getenv('DEBUG', 'True') == 'True'
+
+    app.run(debug=debug_mode, port=port, host='0.0.0.0')
