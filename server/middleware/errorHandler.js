@@ -1,6 +1,15 @@
+import logger from '../utils/logger.js';
+
 // Error handling middleware
 export const errorHandler = (err, req, res, next) => {
-  console.error('Error:', err);
+  logger.error('Request error', {
+    message: err.message,
+    name: err.name,
+    status: err.status,
+    path: req?.path,
+    method: req?.method,
+    stack: err.stack
+  });
 
   if (err.name === 'MongooseError') {
     return res.status(500).json({
@@ -36,24 +45,44 @@ export const requestLogger = (req, res, next) => {
   const start = Date.now();
   res.on('finish', () => {
     const duration = Date.now() - start;
-    console.log(`${req.method} ${req.path} - ${res.statusCode} - ${duration}ms`);
+    logger.info('http_request', {
+      method: req.method,
+      path: req.path,
+      statusCode: res.statusCode,
+      durationMs: duration,
+      ip: req.ip,
+      userAgent: req.get('user-agent')
+    });
   });
   next();
+};
+
+const buildAllowedOrigins = () => {
+  const productionOrigins = (process.env.ALLOWED_ORIGINS || '')
+    .split(',')
+    .map(origin => origin.trim())
+    .filter(Boolean);
+
+  const localOrigins = [
+    'http://localhost:3000',
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://127.0.0.1:3000',
+    'http://127.0.0.1:5173',
+    'http://127.0.0.1:5174'
+  ];
+
+  return process.env.NODE_ENV === 'production'
+    ? productionOrigins
+    : [...productionOrigins, ...localOrigins];
 };
 
 // CORS configuration
 export const corsOptions = {
   origin: function (origin, callback) {
-    const allowedOrigins = [
-      'http://localhost:3000',
-      'http://localhost:5173', // Vite default
-      'http://localhost:5174', // Vite alternate
-      'http://127.0.0.1:3000',
-      'http://127.0.0.1:5173',
-      'http://127.0.0.1:5174'
-    ];
+    const allowedOrigins = buildAllowedOrigins();
 
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+    if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
