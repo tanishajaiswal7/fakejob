@@ -377,3 +377,4 @@ MIT License - feel free to use this project
 ---
 
 **Made with ❤️ to protect job seekers from scams**
+By Govind
